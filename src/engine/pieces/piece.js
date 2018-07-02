@@ -26,7 +26,7 @@ export default class Piece {
                     break;
                 } else {
                     if (board.getPiece(position)) {
-                        if (board.getPiece(position).player !== board.getPiece(currentLocation).player && board.getPiece(position).constructor.name !== "King") {
+                        if (board.isTakingPiece(position, currentLocation)) {
                             availableMoves.push(position);
                         }
                         break;

@@ -14,7 +14,7 @@ export default class Knight extends Piece {
             for (let j = - 2; j <= 2; j++) {
                 if(Math.abs(i*j) === 2){
                     let move = Square.at(currentLocation.row + i, currentLocation.col + j);
-                    if(Board.validateSquare(move)){
+                    if(Board.validateSquare(move) && (!board.getPiece(move) || board.isTakingPiece(move, currentLocation))){
                         availableMoves.push(move);
                     }
                 }

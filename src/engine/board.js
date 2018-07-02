@@ -48,4 +48,8 @@ export default class Board {
         return square.row>=0 && square.col>=0 && square.row<=7 && square.col<=7;
     }
 
+    isTakingPiece(position, currentLocation){
+        return this.getPiece(position).player !== this.getPiece(currentLocation).player && this.getPiece(position).constructor.name !== "King";
+    }
+
 }
