@@ -43,4 +43,9 @@ export default class Board {
             this.currentPlayer = (this.currentPlayer === Player.WHITE ? Player.BLACK : Player.WHITE);
         }
     }
+
+    static validateSquare(square){
+        return square.row>=0 && square.col>=0 && square.row<=7 && square.col<=7;
+    }
+
 }
