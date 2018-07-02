@@ -14,7 +14,7 @@ export default class King extends Piece {
             for (let j = - 1; j <= 1; j++) {
                 if(i != 0 || j != 0){
                     let move = Square.at(currentLocation.row + i, currentLocation.col + j);
-                    if(Board.validateSquare(move)){
+                    if(Board.validateSquare(move) && (!board.getPiece(move) || board.isTakingPiece(move, currentLocation))){
                         availableMoves.push(move);
                     }
                 }
