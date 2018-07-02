@@ -22,7 +22,16 @@ export default class Piece {
         for (let i = 0; i < directions.length; i++) {
             for (let j = 1; j <= 7; j++) {
                 let position = Square.at(currentLocation.row + directions[i][0] * j, currentLocation.col + directions[i][1] * j);
-                if (!Board.validateSquare(position) || board.getPiece(position)) break;
+                if (!Board.validateSquare(position)) {
+                    break;
+                } else {
+                    if (board.getPiece(position)) {
+                        if (board.getPiece(position).player !== board.getPiece(currentLocation).player && board.getPiece(position).constructor.name !== "King") {
+                            availableMoves.push(position);
+                        }
+                        break;
+                    }
+                }
                 availableMoves.push(position);
             }
         }
