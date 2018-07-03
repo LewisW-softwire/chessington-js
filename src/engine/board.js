@@ -2,6 +2,7 @@ import Player from './player';
 import GameSettings from './gameSettings';
 import Square from './square';
 import Rook from './pieces/rook';
+import King from './pieces/king';
 
 export default class Board {
     constructor(currentPlayer) {
@@ -51,13 +52,8 @@ export default class Board {
             }
         }
         if (noValidMoves) {
-            if (this.isCheck) {
-                this.isCheckmate = true;
-                this.isStalemate = false;
-            } else {
-                this.isCheckmate = false;
-                this.isStalemate = true;
-            }
+            this.isCheckmate = this.isCheck;
+            this.isStalemate = !this.isCheck;
         }
     }
 
@@ -111,15 +107,18 @@ export default class Board {
 
         for (let i = 0; i <= 7; i++) {
             for (let j = 0; j <= 7; j++) {
-                if (newBoard.getPiece(Square.at(i, j)) && newBoard.getPiece(Square.at(i, j)).player !== player) {
-                    opposingMoves = opposingMoves.concat(newBoard.getPiece(Square.at(i, j)).getControlledSquares(newBoard));
+                const currentSquare = Square.at(i, j);
+                if (newBoard.getPiece(currentSquare) && newBoard.getPiece(currentSquare).player !== player) {
+                    opposingMoves = opposingMoves.concat(newBoard.getPiece(currentSquare).getControlledSquares(newBoard));
                 }
             }
         }
+        opposingMoves = uniq(opposingMoves);
+
         if (kingReplaced) {
             newBoard.setPiece(kingSquare, kingPiece);
         }
-        return uniq(opposingMoves);
+        return opposingMoves;
 
         function uniq(a) {
             var seen = {};
@@ -159,7 +158,8 @@ export default class Board {
     getKingSquare(player) {
         for (let i = 0; i <= 7; i++) {
             for (let j = 0; j <= 7; j++) {
-                if (this.getPiece(Square.at(i, j)) && this.getPiece(Square.at(i, j)).player === player && this.getPiece(Square.at(i, j)).constructor.name === "King") {
+                const currentPiece = this.getPiece(Square.at(i, j));
+                if (currentPiece && currentPiece.player === player && currentPiece instanceof King) {
                     return Square.at(i, j);
                 }
             }

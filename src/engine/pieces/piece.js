@@ -7,10 +7,6 @@ export default class Piece {
         this.firstmove = true;
     }
 
-    getAvailableMoves(board) {
-        throw new Error('This method must be implemented, and return a list of available moves');
-    }
-
     moveTo(board, newSquare) {
         const currentSquare = board.findPiece(this);
         board.pseudoPawn = null;
@@ -46,5 +42,8 @@ export default class Piece {
 
     checkType(type){
         return this.constructor.name === type;
+    }
+    isOfSameType(piece){
+        return this.constructor.name === piece.constructor.name;
     }
 }
