@@ -1,11 +1,13 @@
 import Player from './player';
 import GameSettings from './gameSettings';
 import Square from './square';
+import Rook from './pieces/rook';
 
 export default class Board {
     constructor(currentPlayer) {
         this.currentPlayer = currentPlayer ? currentPlayer : Player.WHITE;
         this.board = this.createBoard();
+        this.pseudoPawn = null;
     }
 
     createBoard() {
@@ -36,7 +38,7 @@ export default class Board {
     }
 
     movePiece(fromSquare, toSquare) {
-        const movingPiece = this.getPiece(fromSquare);        
+        const movingPiece = this.getPiece(fromSquare);
         if (!!movingPiece && movingPiece.player === this.currentPlayer) {
             this.setPiece(toSquare, movingPiece);
             this.setPiece(fromSquare, undefined);
@@ -44,12 +46,88 @@ export default class Board {
         }
     }
 
-    static validateSquare(square){
-        return square.row>=0 && square.col>=0 && square.row<=7 && square.col<=7;
+    static isOnBoard(square) {
+        return square.row >= 0 && square.col >= 0 && square.row <= 7 && square.col <= 7;
     }
 
-    isTakingPiece(position, currentLocation){
+    isTakingPiece(position, currentLocation) {
         return this.getPiece(position).player !== this.getPiece(currentLocation).player && this.getPiece(position).constructor.name !== "King";
+    }
+
+    getCheckedSquares(player) {
+        let newBoard = this;
+        let kingSquare = this.getKingSquare(player);
+        let kingReplaced = false;
+        let kingPiece = null;
+        if (kingSquare) {
+            kingPiece = this.getPiece(kingSquare);
+            newBoard.setPiece(this.getKingSquare(player), new Rook(player));
+            kingReplaced = true;
+        }
+        let opposingMoves = [];
+
+        for (let i = 0; i <= 7; i++) {
+            for (let j = 0; j <= 7; j++) {
+                if (newBoard.getPiece(Square.at(i, j)) && newBoard.getPiece(Square.at(i, j)).player !== player) {
+                    opposingMoves = opposingMoves.concat(newBoard.getPiece(Square.at(i, j)).getControlledSquares(newBoard));
+                }
+            }
+        }
+        if (kingReplaced) {
+            newBoard.setPiece(kingSquare, kingPiece);
+        }
+        return uniq(opposingMoves);
+
+        function uniq(a) {
+            var seen = {};
+            return a.filter(function (item) {
+                return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+            });
+        }
+    }
+
+    removeCheckedMoves(player, moves, currentLocation) {
+        //Need to store the position of the king and change the rook back afterwards (or find a way to properly clone an object)
+        for (let i = 0; i < moves.length; i++) {
+            let nextBoard = this;
+            //Store the state of the board so that it can be changed back at the end of the test
+            let prevPiece = nextBoard.getPiece(moves[i]);
+            //Simulate the move and check which squares are under check
+            this.forceMovePiece(currentLocation, moves[i]);
+            let kingSquare = nextBoard.getKingSquare(player);
+
+            let checkedSquares = nextBoard.getCheckedSquares(player);
+            //Reset board to it's previous state after getting the checked squares
+            nextBoard.forceMovePiece(moves[i], currentLocation);
+            nextBoard.setPiece(moves[i], prevPiece);
+            if (!kingSquare) {
+                return moves;
+            }
+            for (let j = 0; j < checkedSquares.length; j++) {
+                if (checkedSquares[j].row === kingSquare.row && checkedSquares[j].col === kingSquare.col) {
+                    moves.splice(i, 1);
+                    i--;
+                }
+            }
+        }
+        return moves;
+    }
+
+    getKingSquare(player) {
+        for (let i = 0; i <= 7; i++) {
+            for (let j = 0; j <= 7; j++) {
+                if (this.getPiece(Square.at(i, j)) && this.getPiece(Square.at(i, j)).player === player && this.getPiece(Square.at(i, j)).constructor.name === "King") {
+                    return Square.at(i, j);
+                }
+            }
+        }
+        return null;
+    }
+
+    forceMovePiece(currentLocation, targetLocation){
+        const movingPiece = this.getPiece(currentLocation);
+        this.setPiece(targetLocation, movingPiece);
+        this.setPiece(currentLocation, undefined);
     }
 
 }

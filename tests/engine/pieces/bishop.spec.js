@@ -5,6 +5,7 @@ import King from '../../../src/engine/pieces/king';
 import Player from '../../../src/engine/player';
 import Square from '../../../src/engine/square';
 import Board from '../../../src/engine/board';
+import Rook from '../../../src/engine/pieces/rook';
 
 describe('Bishop', () => {
 
@@ -89,5 +90,20 @@ describe('Bishop', () => {
         const moves = bishop.getAvailableMoves(board);
 
         moves.should.not.deep.include(Square.at(6, 6));
+    });
+
+    it('cannot leave King in checkmate', () => {
+        const bishop = new Bishop(Player.WHITE);
+        const king = new King(Player.WHITE);
+        const blackAttacker = new Rook(Player.BLACK);
+
+        board.setPiece(Square.at(2, 2), bishop);
+        board.setPiece(Square.at(0, 0), king);
+        board.setPiece(Square.at(0, 7), blackAttacker);
+
+        const moves = bishop.getAvailableMoves(board);
+
+        moves.should.deep.include(Square.at(0, 4));
+        moves.should.have.length(1);
     });
 });

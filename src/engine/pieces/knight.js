@@ -7,14 +7,14 @@ export default class Knight extends Piece {
         super(player);
     }
 
-    getAvailableMoves(board) {
+    getControlledSquares(board) {
         let currentLocation = board.findPiece(this);
         let availableMoves = [];
         for (let i = - 2; i <= 2; i++) {
             for (let j = - 2; j <= 2; j++) {
                 if(Math.abs(i*j) === 2){
                     let move = Square.at(currentLocation.row + i, currentLocation.col + j);
-                    if(Board.validateSquare(move) && (!board.getPiece(move) || board.isTakingPiece(move, currentLocation))){
+                    if(Board.isOnBoard(move) && (!board.getPiece(move) || board.isTakingPiece(move, currentLocation))){
                         availableMoves.push(move);
                     }
                 }

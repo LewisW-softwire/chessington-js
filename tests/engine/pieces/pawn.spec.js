@@ -187,4 +187,52 @@ describe('Pawn', () => {
         moves.should.not.deep.include(Square.at(4, 3));
     });
 
+    it('cannot en passant if opponents hasn\'t moved pawn by two squares', () => {
+        const whitePawn = new Pawn(Player.WHITE);
+        const blackPawn = new Pawn(Player.BLACK);
+        board.setPiece(Square.at(6, 3), blackPawn);
+        board.setPiece(Square.at(4, 4), whitePawn);
+
+        whitePawn.moveTo(board,Square.at(5, 4));
+        blackPawn.moveTo(board,Square.at(5, 3));
+
+        const moves = whitePawn.getAvailableMoves(board);
+
+        moves.should.not.deep.include(Square.at(6, 3));
+    });
+
+    it('can en passant if opponents has moved pawn by two squares previously', () => {
+        const whitePawn = new Pawn(Player.WHITE);
+        const blackPawn = new Pawn(Player.BLACK);
+        board.setPiece(Square.at(7, 3), blackPawn);
+        board.setPiece(Square.at(4, 4), whitePawn);
+
+        whitePawn.moveTo(board,Square.at(5, 4));
+        blackPawn.moveTo(board,Square.at(5, 3));
+
+        const moves = whitePawn.getAvailableMoves(board);
+
+        moves.should.deep.include(Square.at(6, 3));
+    });
+
+    it('cannot en passant if opponents hasn\'t moved pawn by two squares in the previous move', () => {
+        const whitePawn = new Pawn(Player.WHITE);
+        const blackPawn = new Pawn(Player.BLACK);
+        const blackRook = new Rook(Player.BLACK);
+        const whiteRook = new Rook(Player.WHITE);
+        board.setPiece(Square.at(7, 3), blackPawn);
+        board.setPiece(Square.at(4, 4), whitePawn);
+        board.setPiece(Square.at(0, 0), whiteRook);
+        board.setPiece(Square.at(7, 0), blackRook);
+        
+        whitePawn.moveTo(board,Square.at(5, 4));
+        blackPawn.moveTo(board,Square.at(5, 3));
+        whiteRook.moveTo(board,Square.at(0, 1));
+        blackRook.moveTo(board,Square.at(7, 1));
+
+        const moves = whitePawn.getAvailableMoves(board);
+
+        moves.should.not.deep.include(Square.at(6, 3));
+    });
+
 });

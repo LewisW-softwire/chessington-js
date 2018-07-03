@@ -6,7 +6,7 @@ export default class Queen extends Piece {
         super(player);
     }
 
-    getAvailableMoves(board) {
+    getControlledSquares(board) {
         let possibleDirections = [[1, 0], [0, 1], [-1, 0], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]];
         return Piece.getLineMoves(board, possibleDirections, board.findPiece(this));
     }

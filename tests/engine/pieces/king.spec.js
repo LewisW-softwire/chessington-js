@@ -76,4 +76,22 @@ describe('King', () => {
 
         moves.should.not.deep.include(Square.at(5, 5));
     });
+
+    it ('cannot whatever', () => {
+        const whiteKing = new King(Player.WHITE);
+        const blackKing = new King(Player.BLACK);
+        const whitePawn = new Pawn(Player.WHITE);
+        const blackPawn = new Pawn(Player.BLACK);
+        board.setPiece(Square.at(3, 3), whiteKing);
+        board.setPiece(Square.at(4, 3), blackKing);
+        board.setPiece(Square.at(3, 4), whitePawn);
+        board.setPiece(Square.at(4, 5), blackPawn);
+
+        const moves = whiteKing.getAvailableMoves(board);
+
+        moves.should.have.length(3);
+        moves.should.deep.include(Square.at(2, 3));
+        moves.should.deep.include(Square.at(2, 2));
+        moves.should.deep.include(Square.at(2, 4));
+    });
 });
