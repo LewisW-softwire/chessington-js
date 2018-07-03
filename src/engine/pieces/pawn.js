@@ -63,10 +63,10 @@ export default class Pawn extends Piece {
         if (newSquare.equals(board.pseudoPawn))
         {
             let realPawnLocation = null;
-            if (newSquare.row === 3) {
-                realPawnLocation = Square.at(4, newSquare.col);
+            if (newSquare.row === 2) {
+                realPawnLocation = Square.at(3, newSquare.col);
             } else {
-                realPawnLocation = Square.at(5, newSquare.col);
+                realPawnLocation = Square.at(4, newSquare.col);
             }
             board.setPiece(realPawnLocation, undefined);
         }

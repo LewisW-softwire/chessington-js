@@ -69,11 +69,13 @@ export default class King extends Piece {
         let currentLocation = board.getKingSquare(board.currentPlayer);
         super.moveTo(board, newSquare);
         if(Math.abs(currentLocation.col - newSquare.col) == 2){
-            let direction = (currentLocation.col - newSquare.col)/2;
+            let direction = (newSquare.col - currentLocation.col)/2;
             let rookPosition = Square.at(currentLocation.row, direction === 1 ? 7 : 0);
             //Move the rook to the location behind the king
             //ForceMovePiece is required because the current player will change after the king moves which would
             //prevent the normal movePiece method from moving the rook.
+            console.log("forcemovepiece");
+            console.log(rookPosition);
             board.forceMovePiece(rookPosition, Square.at(newSquare.row, newSquare.col - direction));
         }
     }

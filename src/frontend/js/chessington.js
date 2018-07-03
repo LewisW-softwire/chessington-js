@@ -24,7 +24,7 @@ function positionStringToSquare(positionString) {
 
 function pieceToPieceString(piece) {
     const playerString = piece.player === Player.WHITE ? 'w' : 'b';
-    
+
     if (piece instanceof Pawn) {
         return playerString + 'P'
     } else if (piece instanceof Rook) {
@@ -57,19 +57,23 @@ function boardToPositionObject() {
 
 function onDragStart(source, piece, position, orientation) {
     return (board.currentPlayer === Player.WHITE && piece.search(/^w/) !== -1) ||
-           (board.currentPlayer === Player.BLACK && piece.search(/^b/) !== -1);
+        (board.currentPlayer === Player.BLACK && piece.search(/^b/) !== -1);
 }
 
 function onDrop(source, target) {
     const fromSquare = positionStringToSquare(source);
     const toSquare = positionStringToSquare(target);
     const pieceToMove = board.getPiece(fromSquare);
-    
+
     if (!pieceToMove || !pieceToMove.getAvailableMoves(board).some(square => square.equals(toSquare))) {
         return 'snapback';
     }
     pieceToMove.moveTo(board, toSquare);
     updateStatus();
+}
+
+function onSnapEnd() {
+    boardUI.position(boardToPositionObject(board));
 }
 
 function updateStatus() {
@@ -79,7 +83,7 @@ function updateStatus() {
 
 function boardInStartingPosition() {
     let board = new Board();
-    
+
     for (let i = 0; i < GameSettings.BOARD_SIZE; i++) {
         board.setPiece(Square.at(1, i), new Pawn(Player.WHITE));
         board.setPiece(Square.at(6, i), new Pawn(Player.BLACK));
@@ -112,13 +116,14 @@ function boardInStartingPosition() {
 export function createChessBoard() {
     board = boardInStartingPosition();
     boardUI = ChessBoard(
-        'chess-board', 
+        'chess-board',
         {
             showNotation: false,
             draggable: true,
             position: boardToPositionObject(board),
             onDragStart: onDragStart,
-            onDrop: onDrop
+            onDrop: onDrop,
+            onSnapEnd: onSnapEnd
         }
     );
     updateStatus();
