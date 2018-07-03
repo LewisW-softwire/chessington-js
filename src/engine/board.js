@@ -8,6 +8,9 @@ export default class Board {
         this.currentPlayer = currentPlayer ? currentPlayer : Player.WHITE;
         this.board = this.createBoard();
         this.pseudoPawn = null;
+        this.isCheck = false;
+        this.isCheckmate = false;
+        this.isStalemate = false;
     }
 
     createBoard() {
@@ -16,6 +19,46 @@ export default class Board {
             board[i] = new Array(GameSettings.BOARD_SIZE);
         }
         return board;
+    }
+
+    updateCheck() {
+        let kingSquare = this.getKingSquare(this.currentPlayer);
+        if (!kingSquare) return;
+        let checkedSquares = this.getCheckedSquares(this.currentPlayer);
+
+        //check
+        if (Square.isSquareInArray(kingSquare,checkedSquares)){
+            this.isCheck = true;
+        } else {
+            this.isCheck = false;
+        }
+
+        //checkmate and stalemate
+        let noValidMoves = true;
+        for (let i=0;i<=7;i++) {
+            for (let j=0;j<=7;j++) {
+                let piece = this.getPiece(Square.at(i, j));
+                if (piece && this.currentPlayer === piece.player) {
+                    let availableMoves = piece.getAvailableMoves(this);
+                    if (availableMoves.length) {
+                        noValidMoves = false;
+                        break;
+                    }
+                }
+            }
+            if (!noValidMoves) {
+                break;
+            }
+        }
+        if (noValidMoves) {
+            if (this.isCheck) {
+                this.isCheckmate = true;
+                this.isStalemate = false;
+            } else {
+                this.isCheckmate = false;
+                this.isStalemate = true;
+            }
+        }
     }
 
     setPiece(square, piece) {

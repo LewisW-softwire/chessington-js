@@ -70,6 +70,27 @@ function onDrop(source, target) {
     }
     pieceToMove.moveTo(board, toSquare);
     updateStatus();
+    blackMove(board);
+}
+
+function blackMove(board) {
+    let availableMoves = [];
+
+    for (let i = 0; i <= 7; i++) {
+        for (let j = 0; j <= 7; j++) {
+            let piece = board.getPiece(Square.at(i, j));
+            if (piece && board.currentPlayer === piece.player && piece.getAvailableMoves(board).length) {
+                availableMoves.push([Square.at(i, j), piece.getAvailableMoves(board)]);
+            }
+        }
+    }
+    if (availableMoves.length) {
+        let randomPiece = Math.floor(Math.random() * availableMoves.length);
+        const pieceToMove = board.getPiece(availableMoves[randomPiece][0]);
+        let randomMove = Math.floor(Math.random() * availableMoves[randomPiece][1].length);
+        pieceToMove.moveTo(board, availableMoves[randomPiece][1][randomMove]);
+    }
+    updateStatus();
 }
 
 function onSnapEnd() {
@@ -78,7 +99,15 @@ function onSnapEnd() {
 
 function updateStatus() {
     const player = board.currentPlayer === Player.WHITE ? 'White' : 'Black';
-    document.getElementById('turn-status').innerHTML = `${player} to move`;
+    let innerHTML = `${player} to move`;
+    if (board.isCheckmate) {
+        innerHTML = 'Checkmate!';
+    } else if (board.isStalemate) {
+        innerHTML = 'Stalemate!';
+    } else if (board.isCheck) {
+        innerHTML += ', Check!'
+    }
+    document.getElementById('turn-status').innerHTML = innerHTML;
 }
 
 function boardInStartingPosition() {

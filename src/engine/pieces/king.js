@@ -78,6 +78,7 @@ export default class King extends Piece {
             console.log(rookPosition);
             board.forceMovePiece(rookPosition, Square.at(newSquare.row, newSquare.col - direction));
         }
+        board.updateCheck();
     }
 
 }

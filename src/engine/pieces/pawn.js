@@ -2,6 +2,7 @@ import Piece from './piece';
 import Square from '../square';
 import Player from '../player';
 import Board from '../board';
+import Queen from './queen';
 
 export default class Pawn extends Piece {
     constructor(player) {
@@ -76,6 +77,10 @@ export default class Pawn extends Piece {
         if (Math.abs(newSquare.row - currentSquare.row) === 2){
             board.pseudoPawn = Square.at((newSquare.row + currentSquare.row) / 2, currentSquare.col);
         }
+        if(newSquare.row === 0 || newSquare.row === 7){
+            board.setPiece(newSquare, new Queen(this.player));
+        }
+        board.updateCheck();
     }
 
 }

@@ -16,6 +16,7 @@ export default class Piece {
         board.pseudoPawn = null;
         board.movePiece(currentSquare, newSquare);
         this.firstmove = false;
+        board.updateCheck();
     }
 
     static getLineMoves(board, directions, currentLocation) {
