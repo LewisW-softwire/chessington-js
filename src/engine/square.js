@@ -15,4 +15,13 @@ export default class Square {
     toString() {
         return `Row ${this.row}, Col ${this.col}`;
     }
+
+    static isSquareInArray(square, squareArray) {
+        for (let j = 0; j < squareArray.length; j++) {
+            if (squareArray[j].equals(square)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

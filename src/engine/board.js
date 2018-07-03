@@ -51,7 +51,7 @@ export default class Board {
     }
 
     isTakingPiece(position, currentLocation) {
-        return this.getPiece(position).player !== this.getPiece(currentLocation).player && this.getPiece(position).constructor.name !== "King";
+        return this.getPiece(position).player !== this.getPiece(currentLocation).player && !this.getPiece(position).checkType("King");
     }
 
     getCheckedSquares(player) {
@@ -103,15 +103,15 @@ export default class Board {
             if (!kingSquare) {
                 return moves;
             }
-            for (let j = 0; j < checkedSquares.length; j++) {
-                if (checkedSquares[j].row === kingSquare.row && checkedSquares[j].col === kingSquare.col) {
-                    moves.splice(i, 1);
-                    i--;
-                }
+            if (Square.isSquareInArray(kingSquare, checkedSquares)) {
+                moves.splice(i, 1);
+                i--;
             }
+
         }
         return moves;
     }
+
 
     getKingSquare(player) {
         for (let i = 0; i <= 7; i++) {
@@ -124,7 +124,7 @@ export default class Board {
         return null;
     }
 
-    forceMovePiece(currentLocation, targetLocation){
+    forceMovePiece(currentLocation, targetLocation) {
         const movingPiece = this.getPiece(currentLocation);
         this.setPiece(targetLocation, movingPiece);
         this.setPiece(currentLocation, undefined);

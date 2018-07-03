@@ -42,4 +42,8 @@ export default class Piece {
     getAvailableMoves(board) {
         return board.removeCheckedMoves(this.player, this.getControlledSquares(board), board.findPiece(this));
     }
+
+    checkType(type){
+        return this.constructor.name === type;
+    }
 }
